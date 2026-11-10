@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#0b0f14">
   <title>Keuanganku</title>
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" href="icon-192.png">
-  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Keuanganku">
@@ -1935,8 +1935,8 @@ A.retry = () => boot();
    lalu layar anak, lalu kembali ke tab Home, dan terakhir meminta tekan sekali lagi untuk keluar. */
 let guardOn = false, exitArmed = false, exitT;
 function ensureGuard() { if (!guardOn) { try { history.pushState({ g: 1 }, ''); guardOn = true; } catch (e) {} } }
-window.addEventListener('pointerdown', ensureGuard, { once: true, capture: true });
-window.addEventListener('keydown', ensureGuard, { once: true, capture: true });
+// Harus setelah interaksi pengguna yang "sah" (sentuhan baru dihitung saat jari diangkat/klik), jika tidak Firefox/Chrome melewati entri ini saat Kembali.
+['click', 'touchend', 'keydown'].forEach(ev => window.addEventListener(ev, function f() { ensureGuard(); if (guardOn) window.removeEventListener(ev, f, true); }, true));
 window.addEventListener('popstate', () => {
   guardOn = false;
   const layers = $$('#layer .layer').filter(l => !l._c), lockUp = !!$('#lock');
