@@ -1929,6 +1929,24 @@ async function boot() {
   catch (e) { if (!$('#lkdots') && !$('#lock')) $('#app').innerHTML = '<div class="err">' + ic('alert', 'l') + '<p style="margin:12px 0 4px;font-weight:700;color:var(--text)">Tidak bisa memuat data</p><p style="margin:0 0 18px">' + esc(e.message) + '</p><button class="btn" data-a="retry">Coba lagi</button></div>'; }
 }
 A.retry = () => boot();
+/* ---------- tombol/gesture Kembali (HP) ----------
+   Aplikasi satu halaman: tanpa ini, "Kembali" meninggalkan halaman (layar kosong).
+   Selalu ada 1 entri penjaga di riwayat browser; tiap "Kembali" menutup lapisan paling atas,
+   lalu layar anak, lalu kembali ke tab Home, dan terakhir meminta tekan sekali lagi untuk keluar. */
+let guardOn = false, exitArmed = false, exitT;
+function ensureGuard() { if (!guardOn) { try { history.pushState({ g: 1 }, ''); guardOn = true; } catch (e) {} } }
+window.addEventListener('pointerdown', ensureGuard, { once: true, capture: true });
+window.addEventListener('keydown', ensureGuard, { once: true, capture: true });
+window.addEventListener('popstate', () => {
+  guardOn = false;
+  const layers = $$('#layer .layer').filter(l => !l._c), lockUp = !!$('#lock');
+  if (layers.length) { layerClose(layers[layers.length - 1]); exitArmed = false; return ensureGuard(); }
+  if (!lockUp && S.stack.length) { A.back(); exitArmed = false; return ensureGuard(); }
+  if (!lockUp && S.tab && S.tab !== 'home') { A.tab({ t: 'home' }); exitArmed = false; return ensureGuard(); }
+  if (exitArmed) { exitArmed = false; clearTimeout(exitT); history.back(); return; }   // tekan kedua: keluar
+  exitArmed = true; toast('Tekan Kembali sekali lagi untuk keluar'); clearTimeout(exitT); exitT = setTimeout(() => { exitArmed = false; }, 2200);
+  ensureGuard();
+});
 if (HOSTED && 'serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 boot();
 </script>
