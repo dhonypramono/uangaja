@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#0b0f14">
   <title>Keuanganku</title>
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" href="icon-192.png">
-  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" href="logo-192.png">
+  <link rel="apple-touch-icon" href="logo-192.png">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Keuanganku">
@@ -149,9 +149,14 @@ svg.i.l{width:26px;height:26px}
 .seg{display:flex;gap:6px;background:var(--card2);padding:4px;border-radius:14px}
 .seg button{flex:1;height:36px;border-radius:11px;font-weight:600;font-size:14px;color:var(--muted)}
 .seg button.on{background:var(--card);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.25)}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.acts3{display:flex;gap:8px}.acts3>.btn{flex:1 1 auto;min-width:0;padding-left:10px;padding-right:10px;white-space:nowrap}
+.herosub{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 14px}
+.herosub>*{min-width:0}
 .opt{border:1px solid var(--line);background:var(--card);border-radius:18px;min-height:52px;padding:10px 8px;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:15px;color:var(--muted);text-align:center}
+.opt{min-width:0}.opt.c{padding:10px 5px}
 .opt.c{flex-direction:column;min-height:82px;gap:8px;font-weight:500}
+.opt.c .nm{white-space:normal;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;line-height:1.25;font-size:13.5px;word-break:normal;overflow-wrap:anywhere;text-overflow:ellipsis}
 .opt.on{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
 .opt.dash{border-style:dashed;background:transparent}
 .opt .nm{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1021,12 +1026,12 @@ function investCard(i) {
   return '<div class="card" style="border-radius:26px" role="button" tabindex="0" data-a="investopen" data-id="' + i.id + '"><div style="display:flex;gap:12px;align-items:center">' + badge + '<div class="tx" style="flex:1;min-width:0"><div class="t" style="font-weight:700;font-size:17px">' + esc(i.name) + '</div><div class="s muted sm">' + esc(meta) + '</div></div>' + link + '</div>' +
     (compactCard ? '<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:16px;gap:10px"><div><div class="num" style="font-size:30px;font-weight:700;letter-spacing:-.02em">' + rp(i.value) + '</div>' + (i.value !== i.capital ? gain : '') + '</div>' + mat + '</div>'
       : '<div class="num" style="font-size:32px;font-weight:700;letter-spacing:-.02em;margin-top:14px">' + rp(i.value) + '</div><div style="display:flex;justify-content:space-between;gap:10px">' + gain + '<span class="muted sm num" style="padding-top:2px">Modal ' + rp(i.capital) + '</span></div>' + sparkline(i.history) +
-      '<div style="display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:8px;margin-top:' + (i.history.length > 1 ? 0 : 14) + 'px"><button class="btn sec2" data-a="invdeposit" data-id="' + i.id + '" style="height:46px">Setor</button><button class="btn sec2" data-a="invvalue" data-id="' + i.id + '" style="height:46px">Perbarui nilai</button><button class="btn sec2" data-a="invsell" data-id="' + i.id + '" style="height:46px">Jual</button></div>') + '</div>';
+      '<div class="acts3" style="margin-top:' + (i.history.length > 1 ? 0 : 14) + 'px"><button class="btn sec2" data-a="invdeposit" data-id="' + i.id + '" style="height:46px">Setor</button><button class="btn sec2" data-a="invvalue" data-id="' + i.id + '" style="height:46px">Perbarui nilai</button><button class="btn sec2" data-a="invsell" data-id="' + i.id + '" style="height:46px">Jual</button></div>') + '</div>';
 }
 function investScreen() {
   const v = S.st.invest, up = v.gain >= 0;
   return subTop('Invest') +
-    '<div class="hero"><div class="lbl"><span>Nilai investasi</span></div><div class="big num">' + rp(v.value) + '</div><div style="display:flex;justify-content:space-between;gap:10px"><b class="num ' + (up ? 'pos' : 'neg') + '" style="font-weight:600;font-size:17px">' + rps(v.gain) + ' (' + (up ? '+' : '–') + trimN(Math.abs(v.gain_pct), 1) + '%)</b><span class="num" style="font-size:17px">Modal ' + rp(v.capital) + '</span></div></div>' +
+    '<div class="hero"><div class="lbl"><span>Nilai investasi</span></div><div class="big num">' + rp(v.value) + '</div><div class="herosub"><b class="num ' + (up ? 'pos' : 'neg') + '" style="font-weight:600;font-size:17px">' + rps(v.gain) + ' (' + (up ? '+' : '–') + trimN(Math.abs(v.gain_pct), 1) + '%)</b><span class="num" style="font-size:17px">Modal ' + rp(v.capital) + '</span></div></div>' +
     '<div class="stack" style="margin-top:18px">' + (v.items.length ? v.items.map(investCard).join('') : '<div class="card">' + empty('trend', 'Belum ada investasi tercatat.') + '</div>') + '</div>' +
     '<div style="margin-top:14px">' + dashed('investnew', 'Tambah investasi') + '</div>';
 }
